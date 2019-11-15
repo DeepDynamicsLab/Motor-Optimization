@@ -13,11 +13,11 @@ m_s_steel = v_s_steel*densities(g.s.material);
 p = 1.68e-8;  % Copper resistivity in Ohm-meters
 mo_clearblock;
 mo_groupselectblock(11);     
-a_s_windings = g.s.ff*mo_blockintegral(5)/g.n_s;        % Cross Section
-l_s_windings = 1e-3*(g.depth + g.s.span*g.s.theta*norm(mean(g.s.p6' + g.s.p9'))) % single slot plus end-turn length
+a_s_windings = g.s.ff*mo_blockintegral(5)/g.n_s;     % Slot area * fill factor
+l_s_windings = 1e-3*(g.depth + g.s.span*g.s.theta*norm(mean(g.s.p6' + g.s.p9'))); % single slot plus single end-turn length
 v_s_windings  = l_s_windings*a_s_windings*g.s.slots;
 m_s_windings = v_s_windings*densities('Copper');
-r_phase = p*l_s_windings*g.s.slots/(a_s_windings*3)                         % divide by 3 for single phase length
+r_phase = p*l_s_windings*g.s.slots/(a_s_windings*3);                         % divide by 3 for single phase length
 % Still need to add in end-turn resistance
 
 %%% rotor steel %%%

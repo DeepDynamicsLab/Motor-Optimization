@@ -2,12 +2,17 @@
 %%% This version puts an additional layer of air behind the rotor and steel
 %%% back-iron.  Hopefully makes results more accurite for teh saturated
 %%% back-iron case.
-function theta_elec = init_geometry_2(g, theta, id, iq, hidewindow)
-if(nargin<5)
+function theta_elec = init_geometry_2(g, theta, id, iq, jd, jq, hidewindow)
+if(nargin<7)
     hidewindow = 1;
 end
+if(nargin<5)
+    jd = 0;
+    jq = 0;
+end
 %%% motor geometry struct g, rotor angle theta, d-axis current id, q-axis
-%%% current iq
+%%% current iq.  Alternatively, d and q axis current densities jd and jq
+
 delta_theta_rm = theta;
 theta = theta/g.r.ppairs;
 
@@ -80,11 +85,32 @@ addsegment_group(p1', p3', 'rotor_air_side', 1, 20)
 addsegment_group(p2', p4', 'rotor_air_side', 1, 20)
 
 
+% Calculate  D/Q axis currents, transform to phase currents %
+abc = @(theta) [cos(-theta), sin(-theta), 1/sqrt(2);
+    cos((2*pi/3)-theta), sin((2*pi/3)-theta), 1/sqrt(2);
+    cos((-2*pi/3)-theta), sin((-2*pi/3)-theta), 1/(sqrt(2))];
+theta_a = atan2(g.s.p6(2), g.s.p6(1));  % Phase A center angle
+p1 = R1'*mean([g.r.p3; g.r.p5])';
+theta_m = atan2(p1(2), p1(1));      % Magnet  angle
+theta_elec = (theta_m - theta_a)*g.r.ppairs - pi/2;
+abc_transform = abc(theta_elec);       % Invers dq0 transform
+i_abc = abc_transform*[id; iq; 0];
+j_abc = abc_transform*[jd; jq; 0];
+i_phase = [i_abc(1), i_abc(2), i_abc(3)];%j*[cos(-theta); -cos(theta + 2*pi/3); -cos(theta-2*pi/3)];
+
+%i_phase = iq*[-.5; -.5; 1];
 
 % Add Materials %
 mi_getmaterial('Air');              % air
 mi_getmaterial(g.r.magnet_type);    % permanent magnet
 mi_addmaterial('wire', 1, 1, 0, 0);
+mi_addmaterial('A', 1, 1, 0, j_abc(1));
+mi_addmaterial('a', 1, 1, 0, -j_abc(1));
+mi_addmaterial('B', 1, 1, 0, j_abc(2));
+mi_addmaterial('b', 1, 1, 0, -j_abc(2));
+mi_addmaterial('C', 1, 1, 0, j_abc(3));
+mi_addmaterial('c', 1, 1, 0, -j_abc(3));
+
 %mi_getmaterial('Hiperco-50');          % armature material: Cobalt Iron
 mi_getmaterial(g.s.material);           % Stator Laminations
 mi_getmaterial(g.r.backiron_material);           % Rotor Back Iron
@@ -105,40 +131,27 @@ for x = 1:g.n_p
 end
 
 % Add Phase Currents %
-% Apply D/Q axis currents, transform to phase currents %
-abc = @(theta) [cos(-theta), sin(-theta), 1/sqrt(2);
-    cos((2*pi/3)-theta), sin((2*pi/3)-theta), 1/sqrt(2);
-    cos((-2*pi/3)-theta), sin((-2*pi/3)-theta), 1/(sqrt(2))];
-theta_a = atan2(g.s.p6(2), g.s.p6(1));  % Phase A center angle
-p1 = R1'*mean([g.r.p3; g.r.p5])';
-theta_m = atan2(p1(2), p1(1));      % Magnet  angle
-theta_elec = (theta_m - theta_a)*g.r.ppairs - pi/2;
-abc_transform = abc(theta_elec);       % Invers dq0 transform
-i_abc = abc_transform*[id; iq; 0];
-i_phase = [i_abc(1), i_abc(2), i_abc(3)];%j*[cos(-theta); -cos(theta + 2*pi/3); -cos(theta-2*pi/3)];
-%i_phase = iq*[-.5; -.5; 1];
-
-g.s.imap = g.s.imap;
-
-mi_addcircprop('A', i_phase(1), 1); 
-mi_addcircprop('a', -i_phase(1), 1); 
-mi_addcircprop('B', i_phase(2), 1); 
-mi_addcircprop('b', -i_phase(2), 1); 
-mi_addcircprop('C', i_phase(3), 1); 
-mi_addcircprop('c', -i_phase(3), 1); 
-
+% Phase currents override material current densities %
+if(norm([id, iq]) > 0)
+    mi_addcircprop('A', i_phase(1), 1); 
+    mi_addcircprop('a', -i_phase(1), 1); 
+    mi_addcircprop('B', i_phase(2), 1); 
+    mi_addcircprop('b', -i_phase(2), 1); 
+    mi_addcircprop('C', i_phase(3), 1); 
+    mi_addcircprop('c', -i_phase(3), 1); 
+end
 
 % Add Phase Labels %
 R4 = [cos(g.s.theta), -sin(g.s.theta); sin(g.s.theta), cos(g.s.theta)];
 p1 = mean([g.s.p4; g.s.p9; g.s.p6; g.s.p5])';
 p2 = mirror_point_about_line(p1, g.s.p6);
 for x = 1:g.n_s
-    addblocklabel(p1,'wire', 0, '<None>', g.s.imap(2*x-1), 0, 11, 1);
+    addblocklabel(p1,g.s.imap(2*x-1), 0, '<None>', g.s.imap(2*x-1), 0, 11, 1);
     
     p1 = R4'*p1;
 end
 for x = 1:g.n_s
-    addblocklabel(p2,'wire', 0, '<None>', g.s.imap(2*x), 0, 11, 1);
+    addblocklabel(p2,g.s.imap(2*x), 0, '<None>', g.s.imap(2*x), 0, 11, 1);
     p2 = R4'*p2;
 end
 
