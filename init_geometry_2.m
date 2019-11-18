@@ -95,7 +95,7 @@ theta_m = atan2(p1(2), p1(1));      % Magnet  angle
 theta_elec = (theta_m - theta_a)*g.r.ppairs - pi/2;
 abc_transform = abc(theta_elec);       % Invers dq0 transform
 i_abc = abc_transform*[id; iq; 0];
-j_abc = abc_transform*[jd; jq; 0];
+j_abc = g.s.ff*abc_transform*[jd; jq; 0];
 i_phase = [i_abc(1), i_abc(2), i_abc(3)];%j*[cos(-theta); -cos(theta + 2*pi/3); -cos(theta-2*pi/3)];
 
 %i_phase = iq*[-.5; -.5; 1];
@@ -123,11 +123,17 @@ R3 = [cos(g.r.theta) -sin(g.r.theta); sin(g.r.theta) cos(g.r.theta)];
 p1 = R1'*mean([g.r.p3; g.r.p5])';
 m_sign = 1;
 theta_m = atan2(p1(2), p1(1));
-for x = 1:g.n_p
-    addblocklabel(p1,g.r.magnet_type, 0, '<None>', '<None>', radtodeg(theta_m), 12, 0);
-    p1 = R3'*p1;
-    m_sign = -m_sign;   % flip north/south magnets
-    theta_m = atan2(m_sign*p1(2), m_sign*p1(1));
+if(g.r.type == 1)
+    for x = 1:g.n_p
+        addblocklabel(p1,g.r.magnet_type, 0, '<None>', '<None>', radtodeg(theta_m), 12, 0);
+        p1 = R3'*p1;
+        m_sign = -m_sign;   % flip north/south magnets
+        theta_m = atan2(m_sign*p1(2), m_sign*p1(1));
+    end
+end
+
+if(g.r.type == 1)
+    % Hallbach array %
 end
 
 % Add Phase Currents %

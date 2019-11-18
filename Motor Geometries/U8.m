@@ -9,13 +9,14 @@ g.s.t_pct =     .28;     % tooth fill percent
 g.s.tip_pct =   .707;      % tooth tip fill percent
 g.s.tip_l =     .5;      % Tooth tip length
 g.s.tip_angle = pi/24;   % Tooth tip flare angle
-g.s.ff =        .5;     % Slot fill-factor
+g.s.ff =        .1974;     % Slot fill-factor
 
 g.r.ppairs =    21;      % pole-pairs
 g.r.r1 =        40.7;     % rotor surface radius
 g.r.r2 =        42.02;     % back-iron radius, magnet side
 g.r.r3 =        43.42;     % backiron radius
-g.r.m_pct =     .62;     % Magnet fill percent
+g.r.m_pct =     .62;     % Magnet pole fill percent
+g.r.type =      1        % 1 = Northe-south poles, 2 = hallbach
 
 g.n_p = 7;              % number of poles to simulate
 g.n_s = 6;              % number of slots to simulate
