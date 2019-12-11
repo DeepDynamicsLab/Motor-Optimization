@@ -54,7 +54,7 @@ j_rotor = j_r_steel + j_r_magnet;
 
 
 if(i == 0)
-    i = 1e6*a_s_windings*j
+    i = 1e6*a_s_windings*j;
 else
     i = 2*i;
 end

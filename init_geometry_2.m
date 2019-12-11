@@ -53,7 +53,8 @@ stator_air_label_pt = R'*[mean([g.s.boundary_point; p1])]';
 % Draw rotor %
 addnodelist_group(g.r.pointlist, 'rotor', 2);
 addsegmentlist_group(g.r.segmentlist, 'rotor', 1, 2);
-addarclist_group(g.r.arclist, 'rotor', 10, 2);
+addarclist_group(g.r.arclist, 'rotor', 20, 2);
+
 
 mi_clearselected();
 mi_selectgroup(2);
@@ -119,22 +120,37 @@ mi_modifymaterial(g.s.material, 6, g.s.t_lam);
 mi_modifymaterial(g.s.material, 8, g.s.stacking_factor);
 
 % Add Magnet Labels %'
-R3 = [cos(g.r.theta) -sin(g.r.theta); sin(g.r.theta) cos(g.r.theta)];
+R3 = [cos(g.r.theta/2) -sin(g.r.theta/2); sin(g.r.theta/2) cos(g.r.theta/2)];
+RSmall = [cos(.001), -sin(.001); sin(.001), cos(.001)];
 p1 = R1'*mean([g.r.p3; g.r.p5])';
 m_sign = 1;
 theta_m = atan2(p1(2), p1(1));
-if(g.r.type == 1)
-    for x = 1:g.n_p
+for x = 1:((g.n_p*2)-1)
+    if(mod(x, 2))
         addblocklabel(p1,g.r.magnet_type, 0, '<None>', '<None>', radtodeg(theta_m), 12, 0);
-        p1 = R3'*p1;
         m_sign = -m_sign;   % flip north/south magnets
-        theta_m = atan2(m_sign*p1(2), m_sign*p1(1));
+    else
+        if(g.r.type == 2)
+            addblocklabel(p1,g.r.magnet_type, 0, '<None>', '<None>', radtodeg(pi/2+theta_m), 12, 0);
+        end
     end
+    p1 = R3'*p1;
+    theta_m = atan2(m_sign*p1(2), m_sign*p1(1));
 end
 
-if(g.r.type == 1)
-    % Hallbach array %
+% Handle 1st and last half-segments of air/halbach magnet
+p11 = RSmall*p1;    % hack to move the points off the edge
+p0 = R3*(R1'*mean([g.r.p3; g.r.p5])');   % First half-segment
+p00 = RSmall'*p0;
+m_sign = m_sign* (-1*double(g.r.r1<g.s.r1) + double(g.r.r1>g.s.r1));
+if(g.r.type == 2)
+    theta_m = atan2(m_sign*p1(2), m_sign*p1(1));
+    addblocklabel(p11,g.r.magnet_type, 0, '<None>', '<None>', radtodeg(pi/2+theta_m), 12, 0);
+    theta_m = atan2(-m_sign*p0(2), -m_sign*p0(1));
+    addblocklabel(p00,g.r.magnet_type, 0, '<None>', '<None>', radtodeg(pi/2+theta_m), 12, 0);
+
 end
+
 
 % Add Phase Currents %
 % Phase currents override material current densities %

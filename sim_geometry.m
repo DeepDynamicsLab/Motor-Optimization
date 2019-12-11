@@ -1,4 +1,4 @@
-function [torque, mass, j_rotor, r_phase] = sim_geometry(g, theta, id, iq, jd, jq)
+function [torque, mass, j_rotor, r_phase, p_ir] = sim_geometry(g, theta, id, iq, jd, jq)
     if(nargin < 5)
         jd = 0;
         jq = 0;
@@ -8,6 +8,4 @@ function [torque, mass, j_rotor, r_phase] = sim_geometry(g, theta, id, iq, jd, j
     i_norm = norm([id, iq]);
     j_norm = norm([jd, jq]);
     [mass, m_stator, m_rotor, j_rotor, r_phase, p_ir] = calc_phys_props(g, i_norm, j_norm);
-    r_phase
-    p_ir
 end

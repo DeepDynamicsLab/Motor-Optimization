@@ -76,7 +76,8 @@ function g = calc_geometry(params)
     g.r.p6 = [g.r.r1*s4, g.r.r1*c4];
     g.r.p7 = [g.r.p6(1), sqrt(g.r.r2^2 - g.r.p6(1)^2)];
     
-    g.r.pointlist = [g.r.p3; g.r.p4; g.r.p5; g.r.p6;, g.r.p7];
+    
+    g.r.pointlist = [g.r.p3; g.r.p4; g.r.p5; g.r.p6; g.r.p7];
     g.r.boundary_point = g.r.p1;
     
     g.r.segmentlist = [g.r.p6, g.r.p7];
@@ -85,6 +86,11 @@ function g = calc_geometry(params)
                    g.r.p7, g.r.p3, [0, 0];
                    g.r.p6, g.r.p5, [0, 0];
                    ];
+    if(g.r.type == 2)
+        g.r.p8 = [0, g.r.r1];
+        g.r.pointlist = [g.r.pointlist; g.r.p8];
+        g.r.arclist = [g.r.arclist; g.r.p8, g.r.p6, [0, 0];];
+    end
                
     g.r_airgap =  mean([g.s.r1, g.r.r1]);
     

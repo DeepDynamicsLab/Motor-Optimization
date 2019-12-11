@@ -16,7 +16,7 @@ g.r.r1 =        48.5;     % rotor surface radius
 g.r.r2 =        41.7;     % back-iron radius, magnet side
 g.r.r3 =        38.5;     % backiron radius
 g.r.m_pct =     .99;     % Magnet pole fill percent
-g.r.type =      1        % 1 = Northe-south poles, 2 = hallbach
+g.r.type =      1;        % 1 = North-south poles, 2 = hallbach
 
 g.n_p = 1;              % number of poles to simulate
 g.n_s = 3;              % number of slots to simulate

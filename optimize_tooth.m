@@ -11,32 +11,31 @@ U8;
 %g.s.material = 'Hiperco-50';
 
 % Peak current density %
-J = 20;
+J = 77;
 
 % Range of tooth fill percent values to sweep %
-t_pct = linspace(.1, .6, 10);
-
+m_pct = linspace(.5, .85, 10);
 torque = [];
 
-for i = 1:length(t_pct)
+for i = 1:length(m_pct)
     tic
-    
-    % Set tooth percent %
-    g.s.t_pct = t_pct(i);
+    %g.r.r3 = g.r.r2 + t_backiron(i);
+    g.r.m_pct = m_pct(i);
     % Recalculate geometry %
     g = calc_geometry(g);
     % Calculate torque %
-    torque = [torque;sim_geometry(g, pi/4, 0, 0, 0, J)];
-    
+    [t, m, j] = sim_geometry(g, pi/16, 0, 9*40);
+    torque = [torque; t];
+
     fprintf('Iteration %d took %f seconds\n', i, toc);
 end
 
-[max_torque, ind] = max(torque);
-opt_t_pct = t_pct(ind);
+%[max_torque, ind] = max(torque);
+%opt_t_pct = t_pct(ind);
 figure;
 hold all
-plot(t_pct, torque);
-scatter([opt_t_pct], [max_torque], 50, 'filled');
-xlabel('Tooth Fill Fraction');
-ylabel('Torque');
+plot(m_pct, torque);
+ylabel('Torque (N-m)');
+xlabel('Hallbach Pole Fill');
+
 NicePlot;
