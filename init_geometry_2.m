@@ -80,8 +80,8 @@ addnode_group(p1, 'rotor_backiron', 4);
 addnode_group(p3, 'rotor_air',20);
 mi_selectgroup(4);
 mi_copyrotate([0, 0], -radtodeg(g.r.theta*g.n_p), 1);
-addarc_group(p1', p2', [0, 0], 'rotor_backiron', 10, 4);
-addarc_group(p3', p4', [0, 0], 'rotor_air', 10, 19);
+addarc_group(p1', p2', [0, 0], 'rotor_backiron', 30, 4);
+addarc_group(p3', p4', [0, 0], 'rotor_air', 30, 19);
 addsegment_group(p1', p3', 'rotor_air_side', 1, 20)
 addsegment_group(p2', p4', 'rotor_air_side', 1, 20)
 
@@ -219,7 +219,7 @@ addarc_group(p3', p2', [0, 0], 'airgap_horizontal', 10, 10);
 mi_clearselected()
 mi_addboundprop('airgap_radius', 0, 0, 0, 0, 0, 0, 0, 0, 5); 
 mi_selectgroup(10); 
-mi_setarcsegmentprop(10, 'airgap_radius', 0, 10);
+mi_setarcsegmentprop(2, 'airgap_radius', 0, 10);
 mi_clearselected()
 mi_addboundprop('airgap_vertical_1', 0, 0, 0, 0, 0, 0, 0, 0, 5); 
 mi_selectgroup(7); 
@@ -232,12 +232,12 @@ mi_setsegmentprop('airgap_vertical_2', 1, 0, 0, 2);
 % Stator Yoke  BC
 mi_clearselected()
 mi_selectgroup(3); 
-mi_setarcsegmentprop(17, 'Asymptotic_1', 0, 1);
+mi_setarcsegmentprop(2, 'Asymptotic_1', 0, 1);
 
 % Rotor Backiron BC
 mi_clearselected()
 mi_selectgroup(4);
-mi_setarcsegmentprop(19, 'Asymptotic_2', 0, 2);
+mi_setarcsegmentprop(2, 'Asymptotic_2', 0, 2);
 
 % Stator Side BC
 mi_clearselected()
