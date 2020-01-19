@@ -13,29 +13,26 @@ U8;
 % Peak current density %
 J = 77;
 
-% Range of tooth fill percent values to sweep %
-m_pct = linspace(.5, .85, 10);
-torque = [];
+n = 1:1;
 
-for i = 1:length(m_pct)
+H = struct;
+
+
+threads = 8;
+poolobj = gcp;
+n_theta = 8;
+thetas = linspace(.01, pi, n_theta);
+
+for i = n
     tic
-    %g.r.r3 = g.r.r2 + t_backiron(i);
-    g.r.m_pct = m_pct(i);
-    % Recalculate geometry %
-    g = calc_geometry(g);
-    % Calculate torque %
-    [t, m, j] = sim_geometry(g, pi/16, 0, 9*40);
-    torque = [torque; t];
+    parfor j = 1:n_theta
+        init_geometry_2(g, thetas(j), 0, 0, 0, J);
+        temp = strcat('v', num2str(j));
+        femm_name = strcat('test', num2str(j), '.fem');
+        torque = calc_torque(g, femm_name);
+    end
+    time = toc;
+    fprintf('Iteration %d took %f seconds, %f seconds per simulation\n', i, time, time/threads);
 
-    fprintf('Iteration %d took %f seconds\n', i, toc);
 end
 
-%[max_torque, ind] = max(torque);
-%opt_t_pct = t_pct(ind);
-figure;
-hold all
-plot(m_pct, torque);
-ylabel('Torque (N-m)');
-xlabel('Hallbach Pole Fill');
-
-NicePlot;

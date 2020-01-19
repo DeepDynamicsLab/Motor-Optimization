@@ -20,7 +20,6 @@ function g = init_motor_params(p);
 if(length(p)<16)
     error('params vector too short');
 end
-
 g.depth =       p(1);      % axial length
 g.s.slots =     p(2);     % stator slots
 g.s.r1 =        p(3);     % tooth surface radius
@@ -42,11 +41,11 @@ g.r.type =      p(16);        % 1 = North-south poles, 2 = hallbach
 g.n_p = 7;              % number of poles to simulate
 g.n_s = 6;              % number of slots to simulate
 
-g.s.material = 'M-19 Steel';        % Stator steel type
+g.s.material = 'Hiperco-50';        % Stator steel type
 g.s.t_lam = .2;                     % Stator lamination thickness
 g.s.stacking_factor = .928;         % lamination stacking factor
 g.r.magnet_type = 'N42';            % Rotor Magnet Type
-g.r.backiron_material = '1018 Steel';   % Rotor Back Iron Material
+g.r.backiron_material = 'Hiperco-50';   % Rotor Back Iron Material
 
 g.s.imap = ['A','A','a','B','b','b','B','c','C','C','c','A'];
 g.s.span = 1;      % number of slots spanned by each turn (typically 1 for concentrated winding, 3 for distributed

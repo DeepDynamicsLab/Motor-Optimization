@@ -21,7 +21,7 @@ g.r.type =      1;        % 1 = North-south poles, 2 = hallbach
 g.n_p = 7;              % number of poles to simulate
 g.n_s = 6;              % number of slots to simulate
 
-g.s.material = 'M-19 Steel';        % Stator steel type
+g.s.material = 'Hiperco-50';        % Stator steel type
 g.s.t_lam = .2;                     % Stator lamination thickness
 g.s.stacking_factor = .928;         % lamination stackign factor
 g.r.magnet_type = 'N42';            % Rotor Magnet Type
