@@ -1,4 +1,4 @@
-function g = init_motor_params(p);
+function g = init_motor_params(p, steel, mag);
 % Initialize motor geometry struct with parameter list p
 % p(1) = axial length
 % p(2) = stator slots
@@ -16,6 +16,10 @@ function g = init_motor_params(p);
 % p(14) = rotor backiron radius
 % p(15) = magnet pole fill percent
 % p(16) = rotor type, N/S vs Hallbach
+if(nargin<2)
+    steel = 'M-19 Steel';
+    mag = 'N42';
+end
 
 if(length(p)<16)
     error('params vector too short');
@@ -41,11 +45,11 @@ g.r.type =      p(16);        % 1 = North-south poles, 2 = hallbach
 g.n_p = 7;              % number of poles to simulate
 g.n_s = 6;              % number of slots to simulate
 
-g.s.material = 'Hiperco-50';        % Stator steel type
+g.s.material = steel;        % Stator steel type
 g.s.t_lam = .2;                     % Stator lamination thickness
 g.s.stacking_factor = .928;         % lamination stacking factor
-g.r.magnet_type = 'N42';            % Rotor Magnet Type
-g.r.backiron_material = 'Hiperco-50';   % Rotor Back Iron Material
+g.r.magnet_type = mag;            % Rotor Magnet Type
+g.r.backiron_material = steel;   % Rotor Back Iron Material
 
 g.s.imap = ['A','A','a','B','b','b','B','c','C','C','c','A'];
 g.s.span = 1;      % number of slots spanned by each turn (typically 1 for concentrated winding, 3 for distributed
